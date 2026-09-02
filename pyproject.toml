@@ -1,0 +1,87 @@
+[project]
+name = "teller"
+version = "0.2.0"
+description = "Non-intrusive cross-layer tracing and diagnosis for LLM inference"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "jsonschema>=4.0.0",
+    "nvitop>=1.6.2",
+    "PyYAML>=6.0",
+    "tqdm>=4.60.0",
+]
+
+[project.optional-dependencies]
+trace = [
+    "torch>=2.0.0",
+]
+torch = [
+    "torch>=2.0.0",
+]
+vllm = [
+    "vllm>=0.15.1",
+    "torch>=2.0.0",
+]
+sglang = [
+    "sglang[all]",
+]
+transformers = [
+    "transformers",
+    "torch>=2.0.0",
+]
+torch_geometric = [
+    "torch>=2.0.0",
+    "torch-geometric",
+]
+mot = [
+    "torch>=2.0.0",
+    "transformers",
+    "torch-geometric",
+    "accelerate>=0.20.0",
+]
+rootcause = [
+    "torch>=2.0.0",
+    "transformers>=4.40.0",
+    "tokenizers>=0.19.0",
+    "accelerate>=1.13.0",
+    "nltk>=3.8.0",
+]
+candidate = [
+    "numpy>=1.24.0",
+    "scikit-learn>=1.2.0",
+]
+examples = [
+    "vllm>=0.15.1",
+    "sglang[all]",
+    "transformers",
+    "torch>=2.0.0",
+]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-benchmark>=4.0.0",
+    "ruff>=0.1.0",
+]
+
+[project.scripts]
+teller = "teller.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.hooks.custom]
+path = "hatch_build.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/teller"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/teller", "src/csrc", "src/config", "hatch_build.py"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+

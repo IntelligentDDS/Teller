@@ -1,0 +1,20 @@
+{
+  "output_file": "trace_vocab_512_v_result.json",
+  "trace_vocab_size": 512,
+  "trace_type": "vertical",
+  "avg_events_per_step_before_tpe_encode": 2241.92,
+  "avg_events_per_step_after_tpe_encode": 25.9,
+  "step_accuracy": 0.7333333333333333,
+  "step_precision": 0.6363636363636364,
+  "step_f1": 0.6363636363636364,
+  "operator_macro_precision": 0.17906645416787403,
+  "operator_macro_f1": 0.16267990470182503,
+  "operator_macro_jaccard": 0.13951701892878365,
+  "operator_macro+_precision": 0.27331195636149197,
+  "operator_macro+_f1": 0.2483009071764698,
+  "operator_macro+_jaccard": 0.21294702889130135,
+  "bleu_1": 0.7603895060926747,
+  "bleu_2": 0.7048012604622281,
+  "bleu_3": 0.677786188027561,
+  "bleu_4": 0.6618098600217855
+}

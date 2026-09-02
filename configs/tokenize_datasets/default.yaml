@@ -1,0 +1,26 @@
+# Tokenize datasets: run TPE tokenizer on exp_datasets, save per-step encoded trace + meta to data/tokenize_datasets
+# See doc/TPE_TOKENIZER.md for full usage.
+
+# Tokenizer: path to trained TPE (output/train_tpe/<run_name>)
+tokenizer:
+  dir: "output/train_tpe/256"
+
+# Input data
+data:
+  exp_datasets_dir: "data/exp_datasets"
+  max_traces: null
+  max_traces_per_engine: null
+  max_steps_per_trace: null
+  engine_whitelist: null
+  num_workers: 4      # parallel trace processing, stream-write per trace
+
+# Kernel preprocessing (must match tokenizer training)
+kernel:
+  demangle: true
+  demangle_max_length: 128
+  filter_template_args: true
+
+# Output
+output:
+  dir: "data/tokenize_datasets"
+  run_name: null

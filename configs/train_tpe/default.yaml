@@ -1,0 +1,44 @@
+# Trace Pair Encode (TPE) training config
+# Configs under ./configs/train_tpe/; outputs under ./output/train_tpe/
+# See doc/TPE_TOKENIZER.md for usage and tokenize_datasets pipeline.
+
+# Data
+data:
+  exp_datasets_dir: "data/exp_datasets"  # relative to project root
+  max_steps_per_trace: null             # null = use all steps
+  max_traces: null                      # null = no global cap; total = sum over engines
+  max_traces_per_engine: null          # null = use all traces from each engine
+  engine_whitelist: null                 # null = all engines; or ["vllm_v1_online", "sglang"]
+  num_workers: 4                        # parallel corpus loading and pair counting
+
+# Kernel name preprocessing
+kernel:
+  demangle: true                         # C++ demangle kernel names
+  demangle_max_length: 128               # truncate demangled name
+  filter_template_args: true             # drop template args after first <
+
+# Special tokens: added to vocab first, in this order. Used in scheme B sequence.
+# Do not change order; token IDs are fixed (e.g. [PAD]=0, [UNK]=1).
+special_tokens:
+  - "[PAD]"     # Padding for batch alignment; id must be 0
+  - "[UNK]"     # Unknown token (OOV)
+  - "[STEP]"    # Step root node (e.g. step_execute_model[request_ids:...])
+  - "[FRONTEND]"      # Torch frontend op (e.g. torch.Tensor.to)
+  - "[BACKEND]"      # Backend op (e.g. aten::copy_, aten::empty_strided)
+  - "[CUDART]"      # CUDA runtime API (e.g. cudaMemcpyAsync_v3020, cudaLaunchKernel_v7000)
+  - "[KERNEL]"       # GPU kernel (demangled name)
+  - "[DRIVER]"  # CUDA driver call
+
+# TPE merge
+merge:
+  target_vocab_size: 256                # stop when vocab reaches this (special + names + merged)
+  max_merge_rounds: null                 # null = merge until target_vocab_size
+  min_pair_count: 2                      # only merge pairs with at least this count
+
+# Output
+output:
+  dir: "output/train_tpe"
+  run_name: null                         # null = timestamp
+  save_vocab: true
+  save_merges: true
+  save_tokenizer: true                   # full tokenizer (vocab + merges) for TracePairTokenizer

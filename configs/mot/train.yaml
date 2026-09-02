@@ -1,0 +1,48 @@
+# MoT training configuration.
+# Run: python scripts/train_mot.py --config configs/mot/train.yaml --device cpu
+
+model:
+  name_or_path: "Qwen/Qwen3-0.6B"
+  cache_dir: "data/models"
+
+trace:
+  tokenizer_dir: "data/tpe_tokenizer/256"
+  encoder_hidden_size: 256
+  num_gcn_layers: 2
+  max_depth: 64
+  duration_log_scale: 1.0e-9
+
+fault_reason:
+  labels: ["no_error", "communication", "driver_library", "kernel", "memory", "scheduling"]
+
+data:
+  tokenize_datasets_dir: "data/tokenize_datasets/256"
+  max_steps_per_trace: 16
+  max_log_tokens: 256
+  max_trace_tokens_per_step: 256
+  project_root: null
+
+training:
+  root_cause_prefix: "Based on the log and trace, the root cause is: "
+  default_root_cause: "No error in current trace and log."  # used when sample root_cause is empty
+  batch_size: 16
+  learning_rate: 3.0e-5
+  max_steps: 1000
+  warmup_steps: 0
+  weight_decay: 0.0
+  max_grad_norm: 1.0   # clip gradients; grad_norm > 1k is unstable without clipping
+  fault_reason_weight: 1.0
+  root_cause_weight: 1.0
+  freeze_backbone: false
+  max_root_cause_tokens: 256
+  # FSDP: set to ["full_shard", "auto_wrap"] (or "full_shard") to enable; use with accelerate launch
+  # fsdp: ["full_shard", "auto_wrap"]
+  # fsdp_config:
+  #   fsdp_min_num_params: 1e8
+  #   fsdp_offload_params: false
+  #   fsdp_state_dict_type: FULL_STATE_DICT
+
+output:
+  save_dir: "output/mot_train_cpu"
+  save_steps: 100
+  log_steps: 10

@@ -1,0 +1,46 @@
+# Single-stream root cause: fault_type inside label with <fault_type> </fault_type>, Qwen3.
+# Label format: "Based on the log and trace, the root cause is: <fault_type> none </fault_type> No error in current trace and log."
+# Output: output/rootcause/qwen3_single_stream/
+
+run_name: "qwen3_single_stream"
+
+model:
+  backbone: "Qwen/Qwen3-0.6B-Base"
+  cache_dir: "data/models"
+  trace_vocab_size: 256
+  dtype: "bf16"
+
+data:
+  tokenize_datasets_dir: "data/tokenize_datasets/256"
+  tpe_tokenizer_dir: "data/tpe_tokenizer/256"
+  max_steps_per_trace: null
+  max_log_tokens: 512
+  max_trace_tokens_per_step: 256
+  max_label_tokens: 384
+  default_root_cause: "No error in current trace and log."
+  train_ratio: 0.8
+  valid_ratio: 0.1
+  test_ratio: 0.1
+  split_seed: 42
+
+training:
+  output_dir: "output/rootcause/qwen3_single_stream"
+  num_train_epochs: 30
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 4
+  learning_rate: 5.0e-5
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  logging_steps: 10
+  save_strategy: "steps"
+  save_steps: 200
+  save_total_limit: 2
+  bf16: true
+  dataloader_num_workers: 4
+  dataloader_pin_memory: true
+  report_to: "none"
+  ddp_find_unused_parameters: false
+
+fault_type_labels: null
+# When true, fault type becomes binary: only none (no_error) and error two classes
+fault_type_binary: true

@@ -1,0 +1,20 @@
+# Hugging Face Accelerate config for rootcause training (multi-GPU, bf16).
+# Use: accelerate launch --config_file configs/rootcause/accelerate.yaml scripts/train_rc.py --config configs/rootcause/default.yaml
+# Adjust num_processes to your GPU count, or run "accelerate config" to generate one.
+{
+  "compute_environment": "LOCAL_MACHINE",
+  "debug": false,
+  "distributed_type": "MULTI_GPU",
+  "downcast_bf16": false,
+  "enable_cpu_affinity": false,
+  "machine_rank": 0,
+  "main_training_function": "main",
+  "mixed_precision": "bf16",
+  "num_machines": 1,
+  "num_processes": 4,
+  "rdzv_backend": "static",
+  "same_network": false,
+  "tpu_use_cluster": false,
+  "tpu_use_sudo": false,
+  "use_cpu": false
+}

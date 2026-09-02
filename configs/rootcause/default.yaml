@@ -1,0 +1,50 @@
+# TellerMoTForRootCauseGenerating training config
+# Output: output/rootcause/<run_name>/
+
+run_name: "default"
+
+model:
+  backbone: "Qwen/Qwen2.5-0.5B"
+  cache_dir: "data/models"
+  trace_vocab_size: 256   # must match TPE tokenizer (e.g. data/tpe_tokenizer/256)
+  # dtype for backbone + trace_embed + fault_head (bf16, fp16, fp32). Default: bf16
+  dtype: "bf16"
+
+data:
+  tokenize_datasets_dir: "data/tokenize_datasets/256"
+  tpe_tokenizer_dir: "data/tpe_tokenizer/256"
+  max_steps_per_trace: null
+  max_log_tokens: 512
+  max_trace_tokens_per_step: 256
+  max_root_cause_tokens: 256
+  default_root_cause: "No error in current trace and log."
+  root_cause_prefix: "Based on the log and trace, the root cause is: "
+  # train/valid/test split (deterministic with split_seed)
+  train_ratio: 0.8
+  valid_ratio: 0.1
+  test_ratio: 0.1
+  split_seed: 42
+
+training:
+  output_dir: "output/rootcause/default"
+  num_train_epochs: 100
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 4
+  learning_rate: 5.0e-5
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  logging_steps: 10
+  save_strategy: "steps"
+  save_steps: 200
+  save_total_limit: 2
+  bf16: true
+  # Data loading: >0 avoids blocking training on I/O (tune to CPU cores; 4–8 typical)
+  dataloader_num_workers: 4
+  dataloader_pin_memory: true
+  report_to: "none"
+
+# fault_type labels: no_error is registered as first class; rest from summary.json fault_types
+# If not set, built from data/tokenize_datasets/<run>/summary.json -> fault_types
+fault_type_labels: null
+# When true, fault type becomes binary: only none (no_error) and error two classes
+fault_type_binary: false

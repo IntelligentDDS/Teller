@@ -1,0 +1,42 @@
+# MoT (Mixture of Tokens) diagnosis model config
+# Backbone: any HuggingFace causal LM; Log + Trace dual stream, shared attention; root cause decode + fault reason classify
+
+# Backbone (Transformers)
+model:
+  name_or_path: "Qwen/Qwen3-0.6B"   # or local path under data/models
+  cache_dir: "data/models"          # where to save/load pretrained weights
+
+# Trace: TPE tokenizer + TracePairEncoder (GCN over call graph + depth/duration)
+trace:
+  tokenizer_dir: "data/tpe_tokenizer/256"   # TPE tokenizer (vocab + merges)
+  encoder_hidden_size: 256                 # node hidden dim before projecting to backbone d
+  num_gcn_layers: 2                        # GCN layers over parent_idx call graph
+  max_depth: 64                             # clamp depth for encoding
+  duration_log_scale: 1.0e-9                # log1p(duration * scale) for duration encoding
+
+# Log: use backbone's tokenizer (e.g. Qwen tokenizer)
+# (no separate config; same as model name_or_path)
+
+# Fault reason: single-label over [no_error, ...], probability ranking at inference
+fault_reason:
+  labels: ["no_error", "communication", "driver_library", "kernel", "memory", "scheduling"]
+  # Map from data fault_type / fault_label: fault_label=false or fault_type in ("none","") -> no_error
+
+# Data
+data:
+  tokenize_datasets_dir: "data/tokenize_datasets/256"
+  max_steps_per_trace: null   # null = use all steps
+  max_log_tokens: 2048
+  max_trace_tokens_per_step: 2048
+  project_root: null         # null = infer from script
+
+# Training (for reference; demo may not train)
+training:
+  root_cause_prefix: "Based on the log and trace, the root cause is: "
+  default_root_cause: "No error in current trace and log."
+  batch_size: 2
+  learning_rate: 1.0e-5
+
+# Output
+output:
+  save_dir: "data/models/mot"
