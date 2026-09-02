@@ -4,7 +4,7 @@ This repository contains the implementation for **TELLER: Non-Intrusive
 Cross-Layer Root-Cause Analysis for LLM Inference**. It includes the
 non-intrusive NVTX/CUPTI collector, Trace Pair Encoding (TPE), and multimodal
 root-cause models used in the paper. The accompanying dataset is in the
-sibling `../data` directory.
+sibling `../data` directory.（figshare:doi:10.6084/m9.figshare.33142493.v1）
 
 ## Installation
 
